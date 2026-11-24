@@ -12,7 +12,7 @@ Landing page s rezervacemi na prohlídky bytů (17:15 a 18:30, 30 míst) a komen
 | `/api/kalendar?termin=…` | Událost do kalendáře (.ics) pro vybraný termín |
 | `/api/pripominka` | Připomínka den před akcí. Spouští ji Vercel Cron 1. 12. v 9:00, každý ji dostane jen jednou |
 
-Jedna rezervace = jeden člověk. Na stejný e-mail se může přihlásit víc lidí (třeba rodina), ale každý pod svým jménem. Stejný člověk nemůže mít dvě rezervace ve stejný čas (procházka a byty v 17:15). Online rezervace termínu se uzavře v čase jeho začátku.
+Jedna rezervace = jeden člověk. V jedné rezervaci jde vybrat víc termínů, pokud se časově nekryjí a nejde o dvě prohlídky bytů (typicky procházka 17:15 + byty 18:30); v databázi je pak každý termín jako samostatný řádek a připomínka přijde jedna společná. Na stejný e-mail se může přihlásit víc lidí (třeba rodina), ale každý pod svým jménem. Stejný člověk nemůže mít dvě rezervace ve stejný čas (procházka a byty v 17:15). Online rezervace termínu se uzavře v čase jeho začátku.
 
 ## Služby
 

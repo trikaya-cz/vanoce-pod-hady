@@ -22,25 +22,35 @@ module.exports = async (req, res) => {
 
     const p = await db();
     const { rows } = await p.query(
-      'select id, termin, jmeno, email, token from rezervace where zruseno is null and pripomenuto is null order by id limit 400');
+      'select id, termin, jmeno, email, token from rezervace where zruseno is null and pripomenuto is null order by id limit 600');
+    // Kdo má víc termínů (procházka + byty), dostane jednu společnou připomínku.
+    const skupiny = new Map();
+    for (const r of rows) {
+      const t = najdi(r.termin);
+      if (!t) continue;
+      const k = `${r.email.toLowerCase()}|${r.jmeno.toLowerCase()}`;
+      if (!skupiny.has(k)) skupiny.set(k, { email: r.email, jmeno: r.jmeno, polozky: [], ids: [] });
+      const g = skupiny.get(k);
+      g.polozky.push({ termin: t, co: coRezervovano(t), zrusitUrl: `${siteUrl(req)}/zrusit?t=${r.token}` });
+      g.ids.push(r.id);
+    }
     const base = siteUrl(req);
     let odeslano = 0, chyby = 0;
-    const fronta = [...rows];
+    const fronta = [...skupiny.values()];
     async function pracovnik() {
       while (fronta.length) {
-        const r = fronta.shift();
-        const t = najdi(r.termin);
-        if (!t) continue;
-        const m = mail.pripominka({ jmeno: r.jmeno, termin: t, co: coRezervovano(t), zrusitUrl: `${base}/zrusit?t=${r.token}`, siteUrl: base });
-        const v = await mail.posli({ to: r.email, ...m });
+        const g = fronta.shift();
+        g.polozky.sort((a, b) => a.termin.cas.localeCompare(b.termin.cas));
+        const m = mail.pripominka({ jmeno: g.jmeno, polozky: g.polozky, siteUrl: base });
+        const v = await mail.posli({ to: g.email, ...m });
         if (v.ok) {
           odeslano++;
-          await p.query('update rezervace set pripomenuto = now() where id = $1', [r.id]);
+          await p.query('update rezervace set pripomenuto = now() where id = any($1::bigint[])', [g.ids]);
         } else chyby++;
       }
     }
     await Promise.all([pracovnik(), pracovnik(), pracovnik(), pracovnik()]);
-    json(res, 200, { ok: true, odeslano, chyby, celkem: rows.length });
+    json(res, 200, { ok: true, odeslano, chyby, lidi: skupiny.size, rezervaci: rows.length });
   } catch (e) { fail(res, e); }
 };
 
