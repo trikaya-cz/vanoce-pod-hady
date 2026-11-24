@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Seznam rezervací | Vánoce Pod Hády</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#152646; --yellow:#FDCA33; --ice:#EEF1F5; --ink:#2A3550; --muted:#5F6880; --line:#D9DEE7; --err:#B3261E; --font:"Cabin","Segoe UI",Arial,sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:var(--font); color:var(--ink); background:var(--ice); font-size:16px; line-height:1.5; }
+  :focus-visible { outline:3px solid var(--yellow); outline-offset:2px; }
+  header { background:var(--navy); color:#fff; padding:16px 20px; padding-top:calc(16px + env(safe-area-inset-top,0px)); display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  header b { font-size:17px; }
+  header .who { font-size:14px; color:rgba(255,255,255,.8); }
+  header button { background:none; border:1px solid rgba(255,255,255,.5); color:#fff; border-radius:999px; padding:6px 14px; font:inherit; font-size:14px; cursor:pointer; }
+  main { width:min(1100px,100% - 32px); margin:24px auto 60px; }
+  .card { background:#fff; border-radius:12px; padding:24px; border:1px solid var(--line); }
+  .login { max-width:420px; margin:60px auto; }
+  h1 { font-size:24px; color:var(--navy); margin:0 0 8px; }
+  p.muted { color:var(--muted); margin:0 0 18px; }
+  label { display:block; font-weight:600; color:var(--navy); margin:0 0 6px; }
+  input[type=email], input[type=text], input[type=search] { font:inherit; font-size:17px; width:100%; padding:12px 14px; border:2px solid var(--line); border-radius:10px; }
+  input:focus { border-color:var(--navy); outline:none; }
+  .btn { font:600 16px/1 var(--font); border-radius:999px; padding:13px 22px; border:0; cursor:pointer; background:var(--navy); color:#fff; margin-top:14px; }
+  .btn.alt { background:var(--yellow); color:var(--navy); }
+  .btn.small { padding:8px 14px; font-size:14px; margin:0; }
+  .err { color:var(--err); margin:12px 0 0; min-height:1em; }
+  .sum { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
+  .sum .card { padding:18px 20px; border-top:5px solid var(--yellow); }
+  .sum .t { font-size:14px; color:var(--muted); }
+  .sum .n { font-size:30px; font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
+  .sum .n small { font-size:16px; color:var(--muted); font-weight:400; }
+  .bar { height:6px; background:var(--ice); border-radius:3px; margin-top:8px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:var(--navy); }
+  .tools { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .tools input { max-width:320px; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
+  .tabs button { font:inherit; font-size:14px; border:2px solid var(--line); background:#fff; border-radius:999px; padding:7px 14px; cursor:pointer; }
+  .tabs button[aria-pressed=true] { border-color:var(--navy); background:var(--navy); color:#fff; }
+  .spacer { flex:1; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--line); }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; font-size:15px; }
+  th { background:#F7F8FA; color:var(--muted); font-weight:600; font-size:13px; }
+  td.c { text-align:center; }
+  tr.zrus td { color:#9aa1b2; text-decoration:line-through; }
+  tr.zrus td.akce { text-decoration:none; }
+  td a { color:var(--navy); }
+  .cas { font-weight:700; color:var(--navy); white-space:nowrap; }
+  input[type=checkbox] { width:20px; height:20px; accent-color:var(--navy); }
+  .link { background:none; border:0; color:var(--err); font:inherit; font-size:14px; cursor:pointer; text-decoration:underline; padding:0; }
+  .empty { padding:30px; text-align:center; color:var(--muted); }
+  @media (max-width:760px) {
+    .sum { grid-template-columns:1fr; }
+    table, thead, tbody, tr, td { display:block; }
+    thead { display:none; }
+    tr { border-bottom:1px solid var(--line); padding:10px 4px; }
+    td { border:0; padding:3px 12px; }
+    td[data-l]::before { content:attr(data-l) ": "; color:var(--muted); font-size:13px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <b style="display:flex;align-items:center;gap:14px"><img src="https://storage.googleapis.com/trikaya39047/logo-hady-bila.png" alt="" style="height:30px;width:auto" onerror="this.remove()">Rezervace na Vánoce Pod Hády</b>
+  <span class="who" id="who"></span>
+</header>
+<main id="app"></main>
+
+<script>
+  const app = document.getElementById('app');
+  let data = null, filtr = 'vse', hledat = '';
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const api = (url, opt = {}) => fetch(url, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...opt });
+
+  let rezim = 'kod';
+
+  function hesloForm(email = '') {
+    document.getElementById('who').textContent = '';
+    app.innerHTML = `<div class="card login">
+      <h1>Přihlášení</h1>
+      <p class="muted">Zadejte svůj pracovní e-mail a heslo týmu.</p>
+      <form id="fh"><label for="em">E-mail</label><input type="email" id="em" value="${esc(email)}" autocomplete="email" required>
+      <label for="pw" style="margin-top:14px">Heslo</label><input type="password" id="pw" autocomplete="current-password" required style="font:inherit;font-size:17px;width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:10px">
+      <button class="btn" type="submit">Přihlásit</button><p class="err" id="eh"></p></form></div>`;
+    document.getElementById('fh').onsubmit = async (e) => {
+      e.preventDefault();
+      const r = await api('/api/prihlaseni', { method: 'PUT', body: JSON.stringify({ email: document.getElementById('em').value.trim(), heslo: document.getElementById('pw').value }) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) { document.getElementById('eh').textContent = d.error || 'Přihlášení se nepovedlo.'; return; }
+      nacti();
+    };
+    document.getElementById('em').focus();
+  }
+
+  function loginForm(email = '') {
+    if (rezim === 'heslo') return hesloForm(email);
+    document.getElementById('who').textContent = '';
+    app.innerHTML = `<div class="card login">
+      <h1>Přihlášení</h1>
+      <p class="muted">Zadejte svůj pracovní e-mail. Pošleme vám na něj kód.</p>
+      <form id="f1"><label for="em">E-mail</label><input type="email" id="em" value="${esc(email)}" autocomplete="email" required>
+      <button class="btn" type="submit">Poslat kód</button><p class="err" id="e1"></p></form></div>`;
+    document.getElementById('f1').onsubmit = async (e) => {
+      e.preventDefault();
+      const em = document.getElementById('em').value.trim();
+      await api('/api/prihlaseni', { method: 'POST', body: JSON.stringify({ email: em }) });
+      kodForm(em);
+    };
+    document.getElementById('em').focus();
+  }
+
+  function kodForm(email) {
+    app.innerHTML = `<div class="card login">
+      <h1>Zadejte kód</h1>
+      <p class="muted">Pokud má ${esc(email)} přístup, přišel na něj šestimístný kód. Platí 10 minut.</p>
+      <form id="f2"><label for="kod">Kód z e-mailu</label><input type="text" id="kod" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
+      <button class="btn" type="submit">Přihlásit</button> <button class="btn alt" type="button" id="zpet">Jiný e-mail</button><p class="err" id="e2"></p></form></div>`;
+    document.getElementById('zpet').onclick = () => loginForm(email);
+    document.getElementById('f2').onsubmit = async (e) => {
+      e.preventDefault();
+      const r = await api('/api/prihlaseni', { method: 'PUT', body: JSON.stringify({ email, kod: document.getElementById('kod').value }) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) { document.getElementById('e2').textContent = d.error || 'Přihlášení se nepovedlo.'; return; }
+      nacti();
+    };
+    document.getElementById('kod').focus();
+  }
+
+
+  function vykresli() {
+    const t = data.terminy;
+    const nazvy = Object.fromEntries(t.map((x) => [x.id, x]));
+    const sum = t.map((x) => `<div class="card"><div class="t">${esc(x.cas)} · ${esc(x.nazev)}</div>
+      <div class="n">${x.obsazeno} <small>/ ${x.kapacita} míst</small></div>
+      <div class="bar"><i style="width:${Math.min(100, Math.round(x.obsazeno / x.kapacita * 100))}%"></i></div></div>`).join('');
+    const q = hledat.toLowerCase();
+    const rows = data.rezervace
+      .filter((r) => filtr === 'vse' || (filtr === 'zrusene' ? r.zruseno : (r.termin === filtr && !r.zruseno)))
+      .filter((r) => filtr === 'zrusene' || filtr !== 'vse' || !r.zruseno)
+      .filter((r) => !q || [r.jmeno, r.email, r.telefon].join(' ').toLowerCase().includes(q))
+      .sort((a, b) => (nazvy[a.termin]?.cas || '').localeCompare(nazvy[b.termin]?.cas || '') || a.jmeno.localeCompare(b.jmeno, 'cs', { numeric: true }));
+    const radky = rows.map((r) => {
+      const x = nazvy[r.termin] || { cas: '', nazev: r.termin };
+      return `<tr class="${r.zruseno ? 'zrus' : ''}">
+        <td data-l="Termín"><span class="cas">${esc(x.cas)}</span> ${x.typ === 'byty' ? 'Byty' : 'Procházka'}</td>
+        <td data-l="Jméno"><b>${esc(r.jmeno)}</b></td>
+        <td data-l="Telefon"><a href="tel:${esc(r.telefon.replace(/\s/g, ''))}">${esc(r.telefon)}</a></td>
+        <td data-l="E-mail"><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
+        <td data-l="Přišel/a" class="c">${r.zruseno ? '' : `<input type="checkbox" aria-label="Přišel/a" data-id="${r.id}" ${r.prisel ? 'checked' : ''}>`}</td>
+        <td class="akce">${r.zruseno ? `<small>zrušeno</small>` : `<button class="link" data-zrus="${r.id}">Zrušit</button>`}</td></tr>`;
+    }).join('');
+    const tab = (id, label) => `<button aria-pressed="${filtr === id}" data-f="${id}">${label}</button>`;
+    app.innerHTML = `<div class="sum">${sum}</div>
+      <div class="tools">
+        <div class="tabs">${tab('vse', 'Vše')}${t.map((x) => tab(x.id, `${x.cas} ${x.typ === 'byty' ? 'byty' : 'procházka'}`)).join('')}${tab('zrusene', 'Zrušené')}</div>
+        <span class="spacer"></span>
+        <input type="search" id="q" placeholder="Hledat jméno, e-mail, telefon" value="${esc(hledat)}">
+        <a class="btn small alt" href="/api/seznam?format=csv" style="text-decoration:none">Stáhnout do Excelu</a>
+        <button class="btn small" id="obnovit">Obnovit</button>
+      </div>
+      ${rows.length ? `<table><thead><tr><th>Termín</th><th>Jméno</th><th>Telefon</th><th>E-mail</th><th class="c">Přišel/a</th><th></th></tr></thead><tbody>${radky}</tbody></table>`
+        : `<div class="card empty">Zatím tu nic není.</div>`}`;
+    app.querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { filtr = b.dataset.f; vykresli(); });
+    const qi = document.getElementById('q');
+    qi.oninput = () => { hledat = qi.value; const pos = qi.selectionStart; vykresli(); const n = document.getElementById('q'); n.focus(); n.setSelectionRange(pos, pos); };
+    document.getElementById('obnovit').onclick = nacti;
+    app.querySelectorAll('input[data-id]').forEach((c) => c.onchange = async () => {
+      const r = data.rezervace.find((x) => x.id == c.dataset.id); r.prisel = c.checked;
+      await api('/api/seznam', { method: 'PATCH', body: JSON.stringify({ id: c.dataset.id, prisel: c.checked }) });
+    });
+    app.querySelectorAll('[data-zrus]').forEach((b) => b.onclick = async () => {
+      const r = data.rezervace.find((x) => x.id == b.dataset.zrus);
+      if (!confirm(`Zrušit rezervaci: ${r.jmeno}? Místo se uvolní pro další zájemce.`)) return;
+      await api('/api/seznam', { method: 'DELETE', body: JSON.stringify({ id: r.id }) });
+      nacti();
+    });
+  }
+
+  async function nacti() {
+    const r = await api('/api/seznam');
+    if (r.status === 401) {
+      try { rezim = (await (await api('/api/prihlaseni')).json()).rezim || 'kod'; } catch (e) { /* výchozí kód */ }
+      return loginForm();
+    }
+    if (!r.ok) { app.innerHTML = '<div class="card empty">Seznam se nepodařilo načíst. Zkuste obnovit stránku.</div>'; return; }
+    data = await r.json();
+    document.getElementById('who').innerHTML = `${esc(data.admin)} <button id="odhlasit">Odhlásit</button>`;
+    document.getElementById('odhlasit').onclick = async () => { await api('/api/prihlaseni', { method: 'DELETE' }); loginForm(); };
+    vykresli();
+  }
+
+  nacti();
+  setInterval(() => { if (data && document.visibilityState === 'visible' && !document.activeElement.matches('input[type=search]')) nacti(); }, 60000);
+</script>
+</body>
+</html>

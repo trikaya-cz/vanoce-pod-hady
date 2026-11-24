@@ -1,0 +1,12 @@
+{
+  "name": "vanoce-pod-hady",
+  "private": true,
+  "description": "Rezervace prohlídek a komentované procházky na Vánocích Pod Hády (2. 12. 2026)",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "nodemailer": "10.3.1",
+    "pg": "8.13.1"
+  }
+}

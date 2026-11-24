@@ -1,0 +1,32 @@
+{
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/seznam",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/zrusit",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ],
+  "regions": [
+    "fra1"
+  ],
+  "crons": [
+    {
+      "path": "/api/pripominka",
+      "schedule": "0 8 1 12 *"
+    }
+  ]
+}

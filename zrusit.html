@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Zrušení rezervace | Vánoce Pod Hády</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#152646; --yellow:#FDCA33; --ice:#EEF1F5; --ink:#2A3550; --muted:#5F6880; }
+  body { margin:0; font-family:"Cabin","Segoe UI",Arial,sans-serif; background:var(--navy); color:var(--ink); font-size:18px; line-height:1.55; min-height:100vh; display:grid; place-items:center; padding:20px; box-sizing:border-box; }
+  .card { background:#fff; border-radius:14px; padding:36px 32px; max-width:460px; width:100%; border-top:6px solid var(--yellow); }
+  h1 { color:var(--navy); font-size:26px; margin:0 0 12px; }
+  p { margin:0 0 18px; }
+  .btn { font:600 17px/1 inherit; font-family:inherit; border-radius:999px; padding:15px 26px; border:0; cursor:pointer; background:var(--navy); color:#fff; text-decoration:none; display:inline-block; }
+  .btn.alt { background:var(--yellow); color:var(--navy); }
+  .btn:focus-visible { outline:3px solid var(--yellow); outline-offset:3px; }
+  small { color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="card" id="c"><p>Načítám rezervaci…</p></div>
+<script>
+  const c = document.getElementById('c');
+  const t = new URLSearchParams(location.search).get('t') || '';
+  const esc = (x) => String(x).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const hotovo = () => { c.innerHTML = '<h1>Rezervace je zrušená</h1><p>Děkujeme, že jste dali vědět. Místo teď může využít někdo jiný.</p><a class="btn alt" href="/">Vybrat jiný termín</a>'; };
+  fetch('/api/zrusit?t=' + encodeURIComponent(t)).then((r) => r.json().then((d) => ({ ok: r.ok, d }))).then(({ ok, d }) => {
+    if (!ok) { c.innerHTML = '<h1>Rezervaci jsme nenašli</h1><p>Odkaz je neúplný nebo neplatný. Napište nám prosím na <a href="mailto:hady@trikaya.cz">hady@trikaya.cz</a>.</p>'; return; }
+    if (d.zruseno) return hotovo();
+    c.innerHTML = '<h1>Zrušit rezervaci?</h1><p>' + esc(d.nazev) + ', středa 2. 12. 2026 v ' + d.cas + ', na jméno ' + esc(d.jmeno) + '.</p><button class="btn" id="b">Zrušit rezervaci</button> <p style="margin-top:18px"><small>Pokud jste se jen překlikli, stránku zavřete. Rezervace zůstane platná.</small></p>';
+    document.getElementById('b').onclick = async (e) => {
+      e.target.disabled = true;
+      await fetch('/api/zrusit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ t }) });
+      hotovo();
+    };
+  }).catch(() => { c.innerHTML = '<p>Stránku se nepodařilo načíst. Zkuste to prosím znovu.</p>'; });
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prohlídky bytů a procházka čtvrtí | Vánoce Pod Hády 2. 12.</title>
+<meta name="description" content="Ve středu 2. 12. vás provedeme hotovými byty i Čtvrtí Pod Hády. Počet míst je omezený, vyberte si termín a rezervujte si místo.">
+<meta property="og:title" content="Vánoce Pod Hády: zažijte čtvrť zblízka">
+<meta property="og:description" content="Ve středu 2. 12. vás provedeme hotovými byty i Čtvrtí Pod Hády. Počet míst je omezený, vyberte si termín a rezervujte si místo.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="preload" as="image" href="/img/hero-mobil.webp" media="(max-width: 700px)">
+<link rel="preload" as="image" href="/img/hero-1280.webp" imagesrcset="/img/hero-1280.webp 1280w, /img/hero-2000.webp 2000w" imagesizes="100vw" media="(min-width: 701px)">
+<meta name="theme-color" content="#152646">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23152646'/%3E%3Crect x='8' y='8' width='6' height='7' fill='%23FDCA33'/%3E%3Crect x='18' y='8' width='6' height='7' fill='%23ffffff' opacity='.35'/%3E%3Crect x='8' y='18' width='6' height='7' fill='%23ffffff' opacity='.35'/%3E%3Crect x='18' y='18' width='6' height='7' fill='%23FDCA33'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #152646;      /* noční modrá z grafiky akce */
+    --navy-2: #20345A;
+    --yellow: #FDCA33;    /* žlutá ČPH */
+    --ice: #EEF1F5;
+    --white: #FFFFFF;
+    --ink: #2A3550;
+    --muted: #5F6880;
+    --line: #D9DEE7;
+    --ok: #1E7A4C;
+    --err: #B3261E;
+    --font: "Cabin", "Segoe UI", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: var(--font); color: var(--ink); background: var(--white); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: var(--navy); }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+  .wrap { width: min(1080px, 100% - 40px); margin: 0 auto; }
+
+  /* Hlavička */
+  .top { background: var(--navy); color: var(--white); padding-top: env(safe-area-inset-top, 0px); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; }
+  .brand { font-weight: 700; font-size: 17px; letter-spacing: .02em; color: var(--white); text-decoration: none; display: flex; gap: 10px; align-items: center; }
+  .brand img { display: block; height: 38px; width: auto; max-width: 220px; }
+  .brand span { display: none; }
+  .brand.txt span { display: inline; }
+  .brand.txt::before { content: ""; display: inline-block; width: 22px; height: 4px; background: var(--yellow); border-radius: 2px; }
+  .top a.web { color: rgba(255,255,255,.8); font-size: 15px; text-decoration: none; }
+  .top a.web:hover { color: var(--white); text-decoration: underline; }
+
+  /* Úvod: noční čtvrť s rozsvícenými okny */
+  .hero { background: var(--navy); color: var(--white); overflow: hidden; }
+  .hero .wrap { padding: 56px 0 0; }
+  .hero h1 { font-size: clamp(38px, 6vw, 64px); line-height: 1.04; margin: 0 0 22px; font-weight: 700; letter-spacing: -.01em; max-width: 16ch; }
+  .hero p.sub { font-size: 20px; color: rgba(255,255,255,.86); margin: 0 0 28px; max-width: 34ch; }
+  .when { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0 0 34px; padding: 0; list-style: none; font-size: 17px; }
+  .when li { display: flex; gap: 10px; align-items: baseline; }
+  .when strong { color: var(--yellow); font-weight: 600; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 17px/1 var(--font); border-radius: 999px; padding: 17px 30px; border: 0; cursor: pointer; text-decoration: none; transition: transform .15s ease, background .15s ease; }
+  .btn-yellow { background: var(--yellow); color: var(--navy); }
+  .btn-yellow:hover { background: #ffd64f; }
+  .btn-navy { background: var(--navy); color: var(--white); }
+  .btn-navy:hover { background: var(--navy-2); }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] { opacity: .55; cursor: progress; }
+  .hero .cta { padding-bottom: 8px; position: relative; z-index: 1; }
+
+  .scene { position: relative; margin: 0; }
+  .scene img { display: block; width: 100%; height: auto; max-height: 760px; object-fit: cover; object-position: 50% 72%; }
+  .scene::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 22%; background: linear-gradient(var(--navy), rgba(21,38,70,0)); pointer-events: none; }
+  .scene figcaption { position: absolute; right: 14px; bottom: 12px; font-size: 12px; color: rgba(255,255,255,.92); background: rgba(21,38,70,.55); padding: 3px 9px; border-radius: 999px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* Sekce */
+  section { padding: 72px 0; }
+  section.ice { background: var(--ice); }
+  h2 { font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; margin: 0 0 14px; color: var(--navy); font-weight: 700; }
+  .lead { color: var(--muted); margin: 0 0 36px; max-width: 60ch; }
+
+  .tours { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .tour { background: var(--white); border: 1px solid var(--line); border-top: 5px solid var(--yellow); border-radius: 10px; padding: 30px 30px 28px; display: flex; flex-direction: column; }
+  .tour h3 { font-size: 25px; line-height: 1.2; margin: 0 0 4px; color: var(--navy); }
+  .tour .kind { color: var(--muted); font-size: 16px; margin: 0 0 16px; }
+  .tour p.desc { margin: 0 0 24px; }
+  .slots { margin-top: auto; display: grid; gap: 10px; }
+  .slot-btn { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; background: var(--ice); border: 2px solid transparent; border-radius: 10px; padding: 14px 18px; font: inherit; color: var(--ink); cursor: pointer; text-align: left; }
+  .slot-btn:hover { border-color: var(--navy); }
+  .slot-btn .t { font-size: 24px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .slot-btn .free { font-size: 15px; color: var(--muted); }
+  .slot-btn .go { font-weight: 600; color: var(--navy); font-size: 16px; white-space: nowrap; }
+  .slot-btn[disabled] { cursor: not-allowed; opacity: .6; }
+  .slot-btn[disabled] .go { color: var(--muted); }
+  .tip { margin: 28px 0 0; padding: 18px 22px; border-left: 5px solid var(--navy); background: var(--white); border-radius: 0 10px 10px 0; max-width: 760px; }
+
+  /* Formulář */
+  .form-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+  form { display: grid; gap: 20px; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; }
+  legend, label.l { font-weight: 600; color: var(--navy); font-size: 16px; margin-bottom: 6px; }
+  .choice { position: relative; }
+  .choice input { position: absolute; opacity: 0; pointer-events: none; }
+  .choice label { display: grid; grid-template-columns: 70px 1fr auto; gap: 14px; align-items: center; border: 2px solid var(--line); border-radius: 10px; padding: 14px 16px; cursor: pointer; background: var(--white); }
+  .choice label .t { font-size: 22px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .choice label .n { line-height: 1.3; }
+  .choice label .f { font-size: 15px; color: var(--muted); white-space: nowrap; }
+  .choice input:checked + label { border-color: var(--navy); background: #FFFBEA; box-shadow: inset 6px 0 0 var(--yellow); }
+  .choice input:focus-visible + label { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  .choice input:disabled + label { opacity: .5; cursor: not-allowed; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .field { display: grid; }
+  input[type=text], input[type=email], input[type=tel], select { font: inherit; font-size: 17px; padding: 13px 14px; border: 2px solid var(--line); border-radius: 10px; background: var(--white); color: var(--ink); width: 100%; }
+  input:focus, select:focus { border-color: var(--navy); outline: none; }
+  .invalid { border-color: var(--err) !important; }
+  .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; color: var(--muted); }
+  .consent input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--navy); flex: none; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .msg { padding: 14px 18px; border-radius: 10px; font-size: 16px; display: none; }
+  .msg.err { display: block; background: #FCECEA; color: var(--err); }
+  .done { display: none; background: var(--navy); color: var(--white); border-radius: 12px; padding: 34px; }
+  .done h3 { color: var(--yellow); font-size: 28px; margin: 0 0 10px; }
+  .done p { margin: 0 0 16px; color: rgba(255,255,255,.9); }
+  .done .btn { margin-top: 6px; }
+  .done .cal { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 18px; }
+  .btn-line { background: transparent; color: var(--white); box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); }
+  .btn-line:hover { box-shadow: inset 0 0 0 2px var(--white); }
+
+  /* Program a praktické info */
+  .program { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; }
+  .program .badge { display: inline-block; background: var(--yellow); color: var(--navy); font-weight: 600; font-size: 16px; border-radius: 999px; padding: 6px 14px; margin-bottom: 16px; }
+  .program p { margin: 0 0 16px; max-width: 62ch; }
+  dl.info { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 14px 28px; }
+  dl.info dt { font-weight: 600; color: var(--navy); }
+  dl.info dd { margin: 0; }
+
+  footer { background: var(--navy); color: rgba(255,255,255,.75); font-size: 15px; padding: 28px 0 calc(28px + env(safe-area-inset-bottom, 0px)); }
+  footer a { color: var(--white); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  @media (max-width: 860px) {
+    body { font-size: 17px; }
+    .hero .wrap { padding-top: 36px; }
+    .scene img { max-height: none; }
+    .tours, .form-grid, .program { grid-template-columns: 1fr; gap: 28px; }
+    section { padding: 52px 0; }
+    .tour { padding: 24px 20px; }
+  }
+  @media (max-width: 520px) {
+    .row2 { grid-template-columns: 1fr; }
+    .choice label { grid-template-columns: 58px 1fr; }
+    .choice label .f { grid-column: 2; }
+    .hero .btn { width: 100%; }
+    .done .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="https://storage.googleapis.com/trikaya39047/logo-hady-bila.png" alt="Čtvrť Pod Hády" onerror="this.parentNode.classList.add('txt');this.remove()"><span>Čtvrť Pod Hády</span></a>
+    <a class="web" href="https://www.hady.cz">www.hady.cz</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="cta">
+      <h1>Vánoce Pod Hády: zažijte čtvrť zblízka</h1>
+      <p class="sub">Během vánočního večera vás provedeme hotovými byty i celou čtvrtí. Míst je omezeně, proto si to své rezervujte předem.</p>
+      <ul class="when">
+        <li><strong>Středa 2. 12. 2026</strong></li>
+        <li>Náměstí Čtvrti Pod Hády, Brno-Maloměřice</li>
+      </ul>
+      <a class="btn btn-yellow" href="#rezervace">Vybrat termín</a>
+    </div>
+  </div>
+  <figure class="scene">
+    <picture>
+      <source media="(max-width: 700px)" type="image/webp" srcset="/img/hero-mobil.webp">
+      <source media="(max-width: 700px)" srcset="/img/hero-mobil.jpg">
+      <source type="image/webp" srcset="/img/hero-1280.webp 1280w, /img/hero-2000.webp 2000w" sizes="100vw">
+      <img src="/img/hero-2000.jpg" alt="Zasněžené náměstí Čtvrti Pod Hády večer s rozsvíceným vánočním stromem, stánky a sousedy s horkými nápoji" width="2000" height="1342">
+    </picture>
+    <figcaption>Ilustrační obrázek</figcaption>
+  </figure>
+</div>
+
+<main>
+  <section class="ice" id="terminy">
+    <div class="wrap">
+      <h2>Vyberte si prohlídku</h2>
+      <p class="lead">Obě prohlídky trvají 30 minut a jsou zdarma. Rezervace je potřeba kvůli omezenému počtu míst.</p>
+      <div class="tours">
+        <article class="tour">
+          <h3>Prohlídky bytů</h3>
+          <p class="kind">17:15 a 18:30 · 30 míst na každý termín</p>
+          <p class="desc">Obchodníci vás za 30 minut provedou třemi vybranými byty z 1. etapy. Uvidíte dispozice i standardy na vlastní oči a dozvíte se, jak funguje vánoční bonus, který platí do 31. 1. 2027.</p>
+          <div class="slots" data-typ="byty"></div>
+        </article>
+        <article class="tour">
+          <h3>Jak vznikala Čtvrť Pod Hády</h3>
+          <p class="kind">Komentovaná procházka 17:15 · 50 míst</p>
+          <p class="desc">Komentovaná procházka s naším projektovým oddělením. Za 30 minut obejdete 1. i 2. etapu a dozvíte se, na jaký archeologický nález jsme narazili při stavbě, k čemu slouží budky pro rorýse a proč jsou domy žluté, vínové a zelené.</p>
+          <div class="slots" data-typ="prochazka"></div>
+        </article>
+      </div>
+      <p class="tip">Chcete stihnout procházku i byty? Procházka začíná ve stejnou dobu jako první prohlídka bytů, vyberte si proto byty v 18:30.</p>
+    </div>
+  </section>
+
+  <section id="rezervace">
+    <div class="wrap form-grid">
+      <div>
+        <h2>Rezervace</h2>
+        <p class="lead">Vyberte termín a vyplňte kontakt. Potvrzení vám přijde e-mailem. Rezervace platí pro jednoho člověka, takže pokud přijdete ve více lidech, rezervujte místo pro každého zvlášť.</p>
+      </div>
+      <div>
+        <form id="form" novalidate>
+          <fieldset>
+            <legend>Termín</legend>
+            <div id="choices"><p class="lead" style="margin:0">Načítám volná místa…</p></div>
+          </fieldset>
+          <div class="field">
+            <label class="l" for="jmeno">Jméno a příjmení</label>
+            <input type="text" id="jmeno" name="jmeno" autocomplete="name" required>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label class="l" for="email">E-mail</label>
+              <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required>
+            </div>
+            <div class="field">
+              <label class="l" for="telefon">Telefon</label>
+              <input type="tel" id="telefon" name="telefon" autocomplete="tel" inputmode="tel" required>
+            </div>
+          </div>
+          <div class="hp" aria-hidden="true"><label>Web <input type="text" name="web" tabindex="-1" autocomplete="off"></label></div>
+          <label class="consent">
+            <input type="checkbox" id="souhlas" name="souhlas" required>
+            <span id="souhlas-text">Souhlasím se zpracováním osobních údajů pro účely rezervace.</span>
+          </label>
+          <label class="consent">
+            <input type="checkbox" id="novinky" name="novinky">
+            <span>Souhlasím se zasíláním reklamních sdělení se speciálními akcemi a informacemi o projektu Čtvrť Pod Hády (nepovinné).</span>
+          </label>
+          <div class="msg" id="msg" role="alert" aria-live="assertive"></div>
+          <div><button class="btn btn-navy" type="submit" id="submit">Rezervovat místo</button></div>
+        </form>
+        <div class="done" id="done" tabindex="-1">
+          <h3>Máte rezervováno!</h3>
+          <p id="done-text"></p>
+          <div class="cal">
+            <a class="btn btn-yellow" id="ics" href="#">Uložit do kalendáře</a>
+            <a class="btn btn-line" id="gcal" href="#" target="_blank" rel="noopener">Google Kalendář</a>
+          </div>
+          <button class="btn btn-line" type="button" id="znovu">Rezervovat dalšího člověka</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ice">
+    <div class="wrap program">
+      <div>
+        <h2>Co dalšího se ten večer děje</h2>
+        <span class="badge">17:00–19:00, bez rezervace, vstup volný</span>
+      </div>
+      <div>
+        <p>Společně nazdobíme vánoční strom, tak si přineste ozdobu z domova. Na náměstí bude světelná pergola a v showroomu andělská místnost na vánoční fotku. Děti čeká ve školce koulovačka s Grinchem a výroba ozdob.</p>
+        <p>O teplé nápoje a dobroty se postarají místní podniky. Můžete přinést i vyprané deky, ručníky nebo pelíšky pro útulek Městské policie Brno.</p>
+        <p>Celý program najdete na <a href="https://www.hady.cz/cs/vanoce-pod-hady">www.hady.cz/cs/vanoce-pod-hady</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap program">
+      <h2>Praktické informace</h2>
+      <dl class="info">
+        <dt>Kde</dt><dd>Náměstí Čtvrti Pod Hády, Brno-Maloměřice. Autobusem MHD č. 63 dojedete až do čtvrti.</dd>
+        <dt>Cena</dt><dd>Prohlídky i procházka jsou zdarma. Procházka je venku, tak se oblečte do zimy.</dd>
+        <dt>Dotazy</dt><dd><a href="mailto:hady@trikaya.cz">hady@trikaya.cz</a></dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Čtvrť Pod Hády, Brno-Maloměřice</span>
+    <a href="https://www.hady.cz">www.hady.cz</a>
+  </div>
+</footer>
+
+<script>
+  // Zásady ochrany osobních údajů Čtvrti Pod Hády.
+  const ZASADY_URL = 'https://www.hady.cz/cs/ochrana-osobnich-udaju';
+
+  const $ = (s) => document.querySelector(s);
+  const form = $('#form'), msg = $('#msg'), submit = $('#submit');
+  let terminy = [];
+
+  if (ZASADY_URL) {
+    $('#souhlas-text').insertAdjacentHTML('beforeend', ' Více v <a href="' + ZASADY_URL + '" target="_blank" rel="noopener">zásadách ochrany osobních údajů</a>.');
+  }
+
+  function mist(n) { return n === 1 ? 'místo' : (n >= 2 && n <= 4) ? 'místa' : 'míst'; }
+  function zbyva(t) {
+    if (t.uzavreno) return 'Rezervace uzavřena';
+    if (t.volno <= 0) return 'Obsazeno';
+    return (t.volno === 1 ? 'Zbývá ' : (t.volno <= 4 ? 'Zbývají ' : 'Zbývá ')) + t.volno + ' ' + mist(t.volno);
+  }
+  function nedostupny(t) { return t.uzavreno || t.volno <= 0; }
+
+  function vykresli() {
+    document.querySelectorAll('.slots').forEach((box) => {
+      box.innerHTML = '';
+      terminy.filter((t) => t.typ === box.dataset.typ).forEach((t) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'slot-btn'; b.disabled = nedostupny(t);
+        b.innerHTML = '<span><span class="t">' + t.cas + '</span><br><span class="free">' + zbyva(t) + '</span></span><span class="go">' + (nedostupny(t) ? '' : 'Rezervovat') + '</span>';
+        b.addEventListener('click', () => vyber(t.id));
+        box.appendChild(b);
+      });
+    });
+    const prev = (form.termin && form.termin.value) || '';
+    const ch = $('#choices'); ch.innerHTML = '';
+    [...terminy].sort((a, b) => a.cas.localeCompare(b.cas)).forEach((t) => {
+      const d = document.createElement('div'); d.className = 'choice';
+      d.innerHTML = '<input type="radio" name="termin" id="t-' + t.id + '" value="' + t.id + '"' + (nedostupny(t) ? ' disabled' : '') + (prev === t.id && !nedostupny(t) ? ' checked' : '') + '>' +
+        '<label for="t-' + t.id + '"><span class="t">' + t.cas + '</span><span class="n">' + t.nazev + '</span><span class="f">' + zbyva(t) + '</span></label>';
+      ch.appendChild(d);
+    });
+  }
+
+  function ukazPotvrzeni(d) {
+    const t = d.termin || terminy.find((x) => x.id === form.termin.value) || { nazev: 'Rezervace', cas: '' };
+    const kdy = t.nazev + ', středa 2. 12. v ' + t.cas + '.';
+    const sraz = ' Sraz je 5 minut před začátkem u showroomu.';
+    let text;
+    if (d.email === true) text = kdy + ' Potvrzení jsme vám poslali na e-mail.' + sraz;
+    else if (d.email === false) text = kdy + ' Rezervace je uložená, jen se nepodařilo odeslat potvrzovací e-mail.' + sraz + ' Uložte si termín do kalendáře.';
+    else text = kdy + sraz + ' Uložte si termín do kalendáře, ať na něj nezapomenete. Kdybyste nemohli přijít, napište nám na hady@trikaya.cz.';
+    $('#done-text').textContent = text;
+    const id = form.termin.value;
+    $('#ics').href = '/api/kalendar?termin=' + encodeURIComponent(id);
+    const start = { '17:15': '20261202T161500Z', '18:30': '20261202T173000Z' }[t.cas] || '20261202T160000Z';
+    const end = { '17:15': '20261202T164500Z', '18:30': '20261202T180000Z' }[t.cas] || '20261202T180000Z';
+    $('#gcal').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+      + '&text=' + encodeURIComponent('Vánoce Pod Hády: ' + t.nazev)
+      + '&dates=' + start + '/' + end
+      + '&location=' + encodeURIComponent('Náměstí Čtvrti Pod Hády, Brno-Maloměřice')
+      + '&details=' + encodeURIComponent('Sraz je 5 minut předem u showroomu na náměstí Čtvrti Pod Hády. Dotazy: hady@trikaya.cz');
+  }
+
+  function vyber(id) {
+    const r = document.getElementById('t-' + id);
+    if (r && !r.disabled) r.checked = true;
+    $('#rezervace').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    setTimeout(() => $('#jmeno').focus({ preventScroll: true }), 450);
+  }
+
+  async function nacti() {
+    try {
+      const r = await fetch('/api/terminy', { cache: 'no-store' });
+      const d = await r.json();
+      terminy = d.terminy || [];
+      vykresli();
+    } catch (e) {
+      $('#choices').innerHTML = '<p class="msg err">Volná místa se nepodařilo načíst. Obnovte prosím stránku.</p>';
+    }
+  }
+
+  function chyba(text, pole) {
+    msg.textContent = text; msg.className = 'msg err';
+    document.querySelectorAll('.invalid').forEach((el) => el.classList.remove('invalid'));
+    if (pole && form[pole] && form[pole].classList) { form[pole].classList.add('invalid'); form[pole].focus(); }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.className = 'msg';
+    const data = {
+      termin: form.termin ? form.termin.value : '',
+      jmeno: form.jmeno.value, email: form.email.value, telefon: form.telefon.value,
+      souhlas: form.souhlas.checked, novinky: form.novinky.checked, web: form.web.value,
+    };
+    if (!data.termin) return chyba('Vyberte prosím termín.');
+    if (data.jmeno.trim().length < 3) return chyba('Vyplňte prosím jméno a příjmení.', 'jmeno');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email.trim())) return chyba('Zkontrolujte prosím e-mail.', 'email');
+    if (data.telefon.replace(/\D/g, '').length < 9) return chyba('Zkontrolujte prosím telefon.', 'telefon');
+    if (!data.souhlas) return chyba('Pro rezervaci potřebujeme váš souhlas se zpracováním údajů.', 'souhlas');
+
+    submit.disabled = true; submit.textContent = 'Rezervuji…';
+    try {
+      const r = await fetch('/api/rezervace', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) { chyba(d.error || 'Rezervaci se nepodařilo uložit. Zkuste to prosím znovu.', d.pole); nacti(); return; }
+      ukazPotvrzeni(d);
+      form.style.display = 'none';
+      $('#done').style.display = 'block';
+      $('#done').focus();
+      nacti();
+    } catch (err) {
+      chyba('Rezervaci se nepodařilo odeslat. Zkontrolujte připojení a zkuste to znovu.');
+    } finally {
+      submit.disabled = false; submit.textContent = 'Rezervovat místo';
+    }
+  });
+
+  $('#znovu').addEventListener('click', () => {
+    const keep = { termin: form.termin ? form.termin.value : '', email: form.email.value, telefon: form.telefon.value };
+    form.reset();
+    form.email.value = keep.email; form.telefon.value = keep.telefon;
+    $('#done').style.display = 'none'; form.style.display = 'grid';
+    vykresli();
+    const r = document.getElementById('t-' + keep.termin); if (r && !r.disabled) r.checked = true;
+    $('#choices').scrollIntoView({ block: 'center' });
+    setTimeout(() => $('#jmeno').focus({ preventScroll: true }), 300);
+  });
+
+  nacti();
+</script>
+</body>
+</html>
